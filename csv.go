@@ -58,7 +58,12 @@ func writeToCSV(filename string, results <-chan *Address) {
 	// 首选方案
 	file, err := os.Create(filename)
 	if err == nil {
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				log.Println("writeToCSV 正常文件退出错误: ", err)
+			}
+		}()
+
 		log.Printf("正在写入主文件: %s", filename)
 		if err := writerFunc(file); err == nil {
 			log.Printf("结果已成功写入 %s 文件。", filename)
@@ -73,7 +78,12 @@ func writeToCSV(filename string, results <-chan *Address) {
 
 	fallbackFile, fallbackErr := os.Create(fallbackFilename)
 	if fallbackErr == nil {
-		defer fallbackFile.Close()
+		defer func() {
+			if err := fallbackFile.Close(); err != nil {
+				log.Println("writeToCSV 备份文件退出错误: ", err)
+			}
+		}()
+
 		log.Printf("正在写入备用文件: %s", fallbackFilename)
 		if err := writerFunc(fallbackFile); err == nil {
 			log.Printf("结果已成功写入备用文件 %s。", fallbackFilename)
@@ -117,7 +127,11 @@ func writeFailedToCSV(filename string, failedJobs <-chan *Address) {
 		// 这里的 log.Fatalf 仍然比较严厉，可以按照 writeToCSV 的模式进行修改
 		log.Fatalf("无法创建失败任务的CSV文件: %s", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("writeFailedToCSV 文件退出错误: ", err)
+		}
+	}()
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()

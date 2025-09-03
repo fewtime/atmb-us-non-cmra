@@ -27,7 +27,11 @@ func getState() []string {
 	if err != nil {
 		log.Println("请求失败: ", err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			log.Println("getState 退出错误: ", err)
+		}
+	}()
 
 	if res.StatusCode != 200 {
 		log.Printf("请求错误: 状态码 %d %s\n", res.StatusCode, res.Status)
@@ -80,7 +84,11 @@ func getStateDetail(state string) []Address {
 	if err != nil {
 		log.Println("请求失败: ", err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			log.Println("getStateDetail 退出错误: ", err)
+		}
+	}()
 
 	// 确保请求成功
 	if res.StatusCode != 200 {
