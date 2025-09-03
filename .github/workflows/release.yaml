@@ -1,0 +1,33 @@
+name: Release
+on:
+  create:
+    tags:
+      - v*
+
+jobs:
+  release:
+    name: Release on GitHub
+    strategy:
+      matrix:
+        target: [linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, windows/amd64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Validates GO releaser config
+        uses: docker://goreleaser/goreleaser:latest
+        with:
+          args: check
+
+      - name: Create release on GitHub
+        uses: docker://goreleaser/goreleaser:latest
+        with:
+          args: release
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

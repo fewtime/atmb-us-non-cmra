@@ -1,0 +1,29 @@
+# ===============================================================
+# .gitignore
+# ===============================================================
+
+# 1. Ignore config files
+config.json
+
+# 2. Ignore compiled binaries
+# The executable file is built from source and should not be committed.
+# Add your specific binary name here. Based on our script, it's 'atmb'.
+atmb
+atmb.exe # For Windows users
+
+# 3. Ignore state files or other runtime data
+# The state file is specific to a single run of the application.
+results.csv
+failed_results.csv
+
+# --- Optional but highly recommended ---
+
+# 4. Ignore common editor/IDE configuration directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 5. Ignore OS-generated files
+.DS_Store # macOS
+Thumbs.db # Windows
